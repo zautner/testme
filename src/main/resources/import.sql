@@ -1,2 +1,2 @@
 INSERT INTO user (account, password) VALUES ('vitaly', 'vitaly');
-CREATE SEQUENCE HIBERNATE_SEQUENCE;
+INSERT INTO user (account, password) VALUES ('admin', 'admin');

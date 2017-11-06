@@ -36,6 +36,8 @@ public class EndPoint implements Serializable {
     @JsonIgnore
     @ManyToMany(targetEntity = User.class)
     @JoinTable(name = "end_point_user",
+            indexes = {@Index(name = "end_point_user_user_id_idx", columnList = "user_id"),
+                    @Index(name = "end_point_user_end_point_id_idx", columnList = "end_point_id")},
             joinColumns = {@JoinColumn(name = "end_point_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")})
     private java.util.Set<User> users = new HashSet<>();

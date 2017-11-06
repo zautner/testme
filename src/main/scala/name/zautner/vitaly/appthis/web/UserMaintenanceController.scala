@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import name.zautner.vitaly.appthis.svc.Model.UserDTO
 import name.zautner.vitaly.appthis.svc.proto.UserService
+import name.zautner.vitaly.appthis.web.validation.InputValidator
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation._
@@ -26,6 +27,8 @@ class UserMaintenanceController @Inject()(userService: UserService) {
     @ResponseBody def addUser(auth: Authentication,
                               @RequestParam(required = true, name = "account") account: String,
                               @RequestParam(required = true, name = "password") password: String): UserDTO = {
+        InputValidator.checkUserPassword(password)
+        InputValidator.checkUserName(account)
         userService.addUser(userService.currentUserId(auth), account, password)
     }
 
@@ -34,6 +37,7 @@ class UserMaintenanceController @Inject()(userService: UserService) {
                                      @RequestParam(required = true, name = "account") account: String,
                                      @RequestParam(required = true, name = "password") password: String,
                                      @RequestParam(required = true, name = "new_password") newPassword: String): AnyRef = {
+        InputValidator.checkUserPassword(newPassword)
         userService.modifyPassword(userService.currentUserAccount(auth),
             userService.currentUserId(auth),
             password,

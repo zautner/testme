@@ -9,6 +9,8 @@ import name.zautner.vitaly.appthis.svc.proto.{CoDecStrategy, EndPointService}
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import scala.collection.JavaConverters._
+
 @Service("endPointService")
 class EndPointServiceImpl @Inject()(coDecStrategy: CoDecStrategy,
                                     endPointDao: EndPointRepository,
@@ -22,8 +24,11 @@ class EndPointServiceImpl @Inject()(coDecStrategy: CoDecStrategy,
     @throws[IllegalArgumentException]("No enity is found")
     @Transactional(readOnly = false)
     override def modifyEndPointForUser(alias: String, userId: Long, newUrl: String): String = {
-        deleteEndPointForUser(alias, userId)
-        createEndPointForUser(newUrl, userId)
+        endPointDao
+          .findById(coDecStrategy.decode(alias))
+          .getOrElse(throw new IllegalArgumentException("No End Point is found"))
+          .setUrl(newUrl)
+        alias
     }
 
     @throws[IllegalArgumentException]("No enity is found")
@@ -45,6 +50,9 @@ class EndPointServiceImpl @Inject()(coDecStrategy: CoDecStrategy,
             ep.setUrl(url)
             ep
         })
+        if (endPoint.getUsers.asScala.exists(userId == _.getId)) {
+            throw new IllegalArgumentException("Duplicate end-point definition!")
+        }
         endPoint.getUsers.add(user)
         endPointDao.save(endPoint)
         coDecStrategy.code(endPoint.getId)

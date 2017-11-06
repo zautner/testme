@@ -7,41 +7,54 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div class="container-fluid">
+<div class="container-fluid alert">
     <div class="row">
         <div class="col-lg-6 col-sm-6 col-md-6">
-            <h4>Add new URL</h4>
-            <label for="url-add"></label>
-            <input class="form-control  input-sm" type="text" id="url-add" name="url-add">
-            <button id="add"> Add new alias</button>
-            <div class="container-fluid">
-                <h4>Modify or delete current alias</h4>
-                <label for="url-modify">URL to modify</label>
-                <input class="form-control" type="text" maxlength="2083" id="url-modify" name="url-modify">
-                <label for="alias-modify">Alias to modify</label>
-                <input class="form-control input-sm" type="text" id="alias-modify" name="alias-modify">
-                <div>
-                    <button id="modify">Modify current alias</button>
-                    <button id="delete">Delete current alias</button>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Add new alias</h4>
+                    <label for="url-add">Enter URL to save here</label>
+                    <input class="form-control  input-sm" type="text" id="url-add" name="url-add">
+                    <button id="add"> Add new alias</button>
                 </div>
             </div>
-            <div class="container">
-                <div>
-                    <button id="list" name="list">List aliases</button>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Modify or delete current alias</h4>
+                    <label for="url-modify">URL to modify</label>
+                    <input class="form-control" type="text" maxlength="2083" id="url-modify" name="url-modify">
+                    <label for="alias-modify">Alias to modify</label>
+                    <input class="form-control input-sm" type="text" id="alias-modify" name="alias-modify">
+                    <div>
+                        <button id="modify">Modify current alias</button>
+                        <button id="delete">Delete current alias</button>
+                    </div>
                 </div>
-                <div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <button id="delete-current-user" name="delete-current-user">Delete current user</button>
+                    <div class="panel panel-default">
+                        <div class="panel-body"><label for="name-user">New user's name</label>
+                            <input class="form-control  input-sm" type="text" maxlength="50" id="name-user"
+                                   name="name-user">
+                            <label for="pwd-user">New user's password</label>
+                            <input class="form-control input-sm" type="password" id="pwd-user" name="pwd-user">
+                            <button id="add-new-user" name="add-new-user">Add new user</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
                     <button id="list-users">List users</button>
+                </div>
+                <div class="warning panel-body">
+                    <button id="logout">LOGOUT</button>
                 </div>
             </div>
         </div>
-        <div class="col-lg-6 col-sm-6 col-md-6">
+        <div class="col-lg-6 col-sm-6 col-md-6 alert alert-success">
             <h4>Data</h4>
-            <div class="row">
-                <label for="aliases">Aliases</label><textarea id="aliases" readonly></textarea><br/>
-            </div>
-            <div class="row">
-                <label for="users">Users</label><textarea id="users" readonly></textarea>
-            </div>
+            <div id="text-out"></div>
         </div>
     </div>
 </div>
@@ -51,13 +64,15 @@
             url: "endpoint",
             method: "GET",
             success: function (data) {
-                $("#aliases").val((JSON.stringify(data)))
+                $("#text-out").text((JSON.stringify(data)))
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert("ERROR:  " + errorThrown)
+                alert("ERROR:  " + JSON.stringify(jqXHR.responseJSON))
             }
         })
     }
+
+    $(document).ready(updateAll());
 
     $("#add").click(function () {
         $.ajax({
@@ -68,7 +83,7 @@
                 updateAll()
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert("ERROR:  " + errorThrown)
+                alert("ERROR:  " + JSON.stringify(jqXHR.responseJSON))
             }
         })
     });
@@ -81,7 +96,7 @@
                 updateAll()
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert("ERROR:  " + errorThrown)
+                alert("ERROR:  " + JSON.stringify(jqXHR.responseJSON))
             }
         })
     });
@@ -94,19 +109,34 @@
                 updateAll()
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert("ERROR:  " + errorThrown)
+                alert("ERROR:  " + JSON.stringify(jqXHR.responseJSON))
             }
         })
     });
-    $("#list").click(function () {
+
+    $("#delete-current-user").click(function () {
         $.ajax({
-            url: "endpoint",
-            method: "GET",
+            url: "user",
+            method: "DELETE",
             success: function (data) {
-                alert(JSON.stringify(data))
+                alert(JSON.stringify(data));
+                updateAll()
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert("ERROR:  " + errorThrown)
+                alert("ERROR:  " + JSON.stringify(jqXHR.responseJSON))
+            }
+        })
+    });
+    $("#add-new-user").click(function () {
+        $.ajax({
+            url: "user?account=" + $("#name-user").val() + "&password=" + $("#pwd-user").val(),
+            method: "POST",
+            success: function (data) {
+                alert(JSON.stringify(data));
+                updateAll()
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("ERROR:  " + JSON.stringify(jqXHR.responseJSON))
             }
         })
     });
@@ -119,9 +149,13 @@
                 alert(JSON.stringify(data))
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert("ERROR:  " + errorThrown)
+                alert("ERROR:  " + JSON.stringify(jqXHR.responseJSON))
             }
         })
-    })
+    });
+    $("#logout").click(function () {
+        window.location.assign('login?logout')
+    });
+    updateAll()
 </script>
 </body>
