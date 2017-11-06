@@ -1,7 +1,10 @@
 package name.zautner.vitaly.appthis.web
 
+import javax.servlet.http.HttpServletRequest
+
 import org.springframework.boot.autoconfigure.web.ErrorController
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.servlet.view.RedirectView
 
 /**
@@ -10,9 +13,7 @@ import org.springframework.web.servlet.view.RedirectView
   */
 @Controller class HomeController extends ErrorController {
 
-    import org.springframework.web.bind.annotation.RequestMapping
-
-    @RequestMapping(value = Array("/error")) def error: RedirectView = {
+    @GetMapping(value = Array("/error")) def error(request: HttpServletRequest): RedirectView = {
         new RedirectView("/login")
     }
 

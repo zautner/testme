@@ -8,6 +8,7 @@ import name.zautner.vitaly.appthis.dao.model.User
 import name.zautner.vitaly.appthis.dao.proto.UserRepository
 import name.zautner.vitaly.appthis.svc.Model.UserDTO
 import name.zautner.vitaly.appthis.svc.proto.UserService
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -18,9 +19,11 @@ import org.springframework.transaction.annotation.Transactional
 class UserServiceImpl @Inject()(userDao: UserRepository,
                                 endPointService: EndPointServiceImpl,
                                 passwordEncoder: PasswordEncoder) extends UserService {
+    private val logger = LoggerFactory.getLogger(getClass)
 
     @Transactional(readOnly = true)
     override def listUsers: Iterable[UserDTO] = userDao.list().map((user: User) => {
+        logger.info(s"listUsers started")
         UserDTO(user.getAccount, endPointService.listEndpointsForUser(user.getId, ""))
     })
 
@@ -35,7 +38,7 @@ class UserServiceImpl @Inject()(userDao: UserRepository,
         UserDTO(account, List.empty)
     }
 
-    @throws[CredentialException]("No modification to holy account is permitted!")
+    @throws[CredentialException]("Holy account!")
     @throws[IllegalAccessException]("Unknown user ID")
     @Transactional(readOnly = false)
     override def modifyPassword(account: String, userId: Long, password: String, newPassword: String): Unit = {
