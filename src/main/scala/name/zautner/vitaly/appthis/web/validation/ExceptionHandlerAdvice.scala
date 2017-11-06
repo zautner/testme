@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.{ControllerAdvice, ExceptionHandl
 
 @ControllerAdvice(value = Array("name.zautner.vitaly.appthis.web"))
 class ExceptionHandlerAdvice {
-    @ExceptionHandler(Array(classOf[MalformedURLException], classOf[InputValidationException]))
+    @ExceptionHandler(Array(classOf[MalformedURLException], classOf[InputValidationException], classOf[NumberFormatException]))
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     def badEntityHandler(e: Exception): String = {
         s"Wrong parameter passed<br/> <h3>${e.getMessage}</h3>"

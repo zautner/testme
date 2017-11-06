@@ -40,6 +40,7 @@ class OpaqueUrlSecurityCfg @Inject()(encoder: PasswordEncoder,
           .antMatchers("/login/**").permitAll()
           .antMatchers("/user/**").authenticated()
           .and().csrf().disable().formLogin()
+          .failureUrl("/error")
           .defaultSuccessUrl("/home.htmlx")
           .usernameParameter("username")
           .passwordParameter("password")
