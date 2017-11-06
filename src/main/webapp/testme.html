@@ -1,0 +1,127 @@
+<head>
+    <title>Appthis Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6 col-sm-6 col-md-6">
+            <h4>Add new URL</h4>
+            <label for="url-add"></label>
+            <input class="form-control  input-sm" type="text" id="url-add" name="url-add">
+            <button id="add"> Add new alias</button>
+            <div class="container-fluid">
+                <h4>Modify or delete current alias</h4>
+                <label for="url-modify">URL to modify</label>
+                <input class="form-control" type="text" maxlength="2083" id="url-modify" name="url-modify">
+                <label for="alias-modify">Alias to modify</label>
+                <input class="form-control input-sm" type="text" id="alias-modify" name="alias-modify">
+                <div>
+                    <button id="modify">Modify current alias</button>
+                    <button id="delete">Delete current alias</button>
+                </div>
+            </div>
+            <div class="container">
+                <div>
+                    <button id="list" name="list">List aliases</button>
+                </div>
+                <div>
+                    <button id="list-users">List users</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-sm-6 col-md-6">
+            <h4>Data</h4>
+            <div class="row">
+                <label for="aliases">Aliases</label><textarea id="aliases" readonly></textarea><br/>
+            </div>
+            <div class="row">
+                <label for="users">Users</label><textarea id="users" readonly></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function updateAll() {
+        $.ajax({
+            url: "endpoint",
+            method: "GET",
+            success: function (data) {
+                $("#aliases").val((JSON.stringify(data)))
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("ERROR:  " + errorThrown)
+            }
+        })
+    }
+
+    $("#add").click(function () {
+        $.ajax({
+            url: "endpoint?url=" + $("#url-add").val(),
+            method: "POST",
+            success: function (data) {
+                alert(JSON.stringify(data));
+                updateAll()
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("ERROR:  " + errorThrown)
+            }
+        })
+    });
+    $("#modify").click(function () {
+        $.ajax({
+            url: "endpoint?url=" + $("#url-modify").val() + "&alias=" + $("#alias-modify").val(),
+            method: "PUT",
+            success: function (data) {
+                alert(JSON.stringify(data));
+                updateAll()
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("ERROR:  " + errorThrown)
+            }
+        })
+    });
+    $("#delete").click(function () {
+        $.ajax({
+            url: "endpoint?url=" + $("#url-modify").val() + "&alias=" + $("#alias-modify").val(),
+            method: "DELETE",
+            success: function (data) {
+                alert(JSON.stringify(data));
+                updateAll()
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("ERROR:  " + errorThrown)
+            }
+        })
+    });
+    $("#list").click(function () {
+        $.ajax({
+            url: "endpoint",
+            method: "GET",
+            success: function (data) {
+                alert(JSON.stringify(data))
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("ERROR:  " + errorThrown)
+            }
+        })
+    });
+
+    $("#list-users").click(function () {
+        $.ajax({
+            url: "user",
+            method: "GET",
+            success: function (data) {
+                alert(JSON.stringify(data))
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("ERROR:  " + errorThrown)
+            }
+        })
+    })
+</script>
+</body>
